@@ -1,0 +1,58 @@
+name: Publish packages
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@zafeguard'
+
+      - name: Extract and normalize release version from tag
+        id: extract_version
+        run: |
+          RAW_TAG="${GITHUB_REF#refs/tags/}"
+          # Remove leading 'v' if present
+          VERSION="${RAW_TAG#v}"
+          echo "Normalized version: $VERSION"
+          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Update package.json version (if different)
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          if [ "$CURRENT_VERSION" != "$RELEASE_VERSION" ]; then
+            echo "Updating version from $CURRENT_VERSION to $RELEASE_VERSION"
+            npm version $RELEASE_VERSION --no-git-tag-version
+          else
+            echo "Version $RELEASE_VERSION already set in package.json"
+          fi
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build package
+        run: npm run build
+
+      - name: Run all tests
+        run: npm test
+
+      - name: Publish package
+        run: npm publish --access=restricted

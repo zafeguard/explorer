@@ -1,0 +1,57 @@
+{
+  "name": "@zafeguard/explorer",
+  "version": "1.0.0",
+  "description": "Block Explorer SDK",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zafeguard/explorer-lib.git"
+  },
+  "publishConfig": {
+    "@zafeguard:registry": "https://npm.pkg.github.com"
+  },
+  "scripts": {
+    "clean": "rimraf dist node_modules tsconfig.tsbuildinfo",
+    "test": "jest --passWithNoTests",
+    "build:node": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "build:browser": "npx esbuild src/index.ts --bundle --platform=browser --outfile=dist/browser/index.js --format=esm",
+    "build": "npm run build:node && npm run build:browser"
+  },
+  "keywords": [],
+  "author": "Zafeguard <dev@zafeguard.com>",
+  "homepage": "https://zafeguard.com",
+  "bugs": {
+    "url": "https://github.com/zafeguard/explorer-lib/issues"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/lodash": "^4.17.16",
+    "@types/node": "^22.14.1",
+    "esbuild": "^0.25.4",
+    "jest": "^29.7.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.3.2",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.15",
+    "tsconfig-paths": "^4.2.0",
+    "type-fest": "^4.41.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "lodash": "^4.17.21"
+  },
+  "main": "./dist/node/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/browser/index.js",
+      "require": "./dist/node/index.js",
+      "default": "./dist/node/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "dist/node/index.d.ts"
+}
