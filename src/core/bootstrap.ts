@@ -1,9 +1,8 @@
-import { BootstrapOptions, FunctionKeys, FunctionType, IBlockExplorer } from "@/types";
+import { BootstrapOptions, FunctionKeys, IBlockExplorer } from "@/types";
 import { AxiosInstance } from "axios";
 import * as _ from "lodash";
-import { SetReturnType } from "type-fest";
 
-class Caller implements IBlockExplorer {
+export class Caller implements IBlockExplorer {
     constructor(
         private readonly instances: Array<IBlockExplorer>,
     ) { }
