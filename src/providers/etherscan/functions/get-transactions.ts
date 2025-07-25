@@ -73,8 +73,8 @@ export const getTransactions = createClassMethod<
   const nextCursor =
     items.length > 0
       ? ({
-          page: prevCursor.page + 1,
-          offset: prevCursor.offset,
+          page: (prevCursor?.page ?? 1) + 1,
+          offset: prevCursor?.offset ?? 0,
         } satisfies Cursor)
       : null;
   return { items, nextCursor };
