@@ -44,7 +44,7 @@ export const getTransactions = createClassMethod<
   const lastSeen = _.last(items);
   const nextCursor = lastSeen
     ? {
-        last_seen_txid: _.last(items),
+        last_seen_txid: lastSeen.transactionHash,
       }
     : null;
   return { items, nextCursor };
