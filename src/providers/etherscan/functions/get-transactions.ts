@@ -2,12 +2,18 @@ import {
   GetTransactionsOptions,
   GetTransactionsResponse,
   IBlockExplorer,
+  TransactionBasicInfo,
 } from '@/types';
 import { EtherscanResponse } from '../types';
 import { createClassMethod } from '@/core';
 
 type TransactionResponse = {
   readonly hash: string;
+  readonly confirmations: `${number}`;
+  readonly gasUsed: `${number}`;
+  readonly gasPrice: `${number}`;
+  readonly gas: `${number}`;
+  readonly timeStamp: `${number}`;
 };
 type Cursor = {
   readonly page: number;
@@ -69,7 +75,15 @@ export const getTransactions = createClassMethod<
         result: [],
       };
     });
-  const items = response.result.map((item) => item.hash);
+  const items = response.result.map((item) => {
+    const gasFee = BigInt(item.gasUsed ?? item.gas ?? "0") * BigInt(item.gasPrice ?? "0");
+    return {
+      transactionHash: item.hash,
+      confirmations: Number(item.confirmations),
+      gasFee,
+      timestamp: Number(item.timeStamp),
+    } satisfies TransactionBasicInfo;
+  });
   const nextCursor =
     items.length > 0
       ? ({

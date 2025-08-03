@@ -3,19 +3,23 @@ import {
   GetTransactionsOptions,
   GetTransactionsResponse,
   IBlockExplorer,
+  TransactionBasicInfo,
 } from '@/types';
+import moment from 'moment';
 
 export const getTransactions = createClassMethod<
   IBlockExplorer,
   GetTransactionsOptions
 >(async (instance, options): Promise<GetTransactionsResponse> => {
-  const { walletAddress, tokenAddress, prevCursor, take = 20 } = options;
+  const { walletAddress, tokenAddress, prevCursor, take = 20, currentBlock } = options;
   if (tokenAddress) {
     const response = await instance
       .client
       .get<{
         readonly result: Array<{
           readonly transaction_hash: string;
+          readonly block_number: number;
+          readonly block_timestamp: string;
         }>;
         readonly cursor: string;
         readonly page: string;
@@ -39,7 +43,12 @@ export const getTransactions = createClassMethod<
       });
     if (!response.data) return { items: [], nextCursor: null };
     return {
-      items: response.data.result.map((item) => item.transaction_hash),
+      items: response.data.result.map((item) => ({
+        transactionHash: item.transaction_hash,
+        confirmations: currentBlock ? currentBlock - item.block_number : null,
+        timestamp: moment(item.block_timestamp).unix(),
+        gasFee: null,
+      } satisfies TransactionBasicInfo)),
       nextCursor: {
         cursor: response.data.cursor,
         limit: response.data.page_size,
@@ -52,6 +61,11 @@ export const getTransactions = createClassMethod<
     .get<{
       readonly result: Array<{
         readonly hash: string;
+        readonly gas_price: `${number}`;
+        readonly gas: `${number}`;
+        readonly receipt_gas_used: `${number}`;
+        readonly block_timestamp: string;
+        readonly block_number: `${number}`;
       }>;
       readonly cursor: string;
       readonly limit: string;
@@ -73,7 +87,15 @@ export const getTransactions = createClassMethod<
 
   if (!response.data) return { items: [], nextCursor: null };
   return {
-    items: response.data.result.map((item) => item.hash),
+    items: response.data.result.map((item) => {
+      const gasFee = BigInt(item.receipt_gas_used ?? item.gas ?? "0") * BigInt(item.gas_price ?? "0");
+      return {
+        transactionHash: item.hash,
+        timestamp: moment(item.block_timestamp).unix(),
+        gasFee,
+        confirmations: currentBlock ? currentBlock - Number(item.block_number) : null,
+      } satisfies TransactionBasicInfo
+    }),
     nextCursor: {
       cursor: response.data.cursor,
       limit: response.data.limit,

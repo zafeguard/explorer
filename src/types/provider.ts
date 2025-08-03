@@ -26,14 +26,21 @@ type WalletAddress = string;
 export type GetTransactionsOptions<T = object> = {
   readonly walletAddress: WalletAddress;
   readonly tokenAddress?: TokenAddress;
+  readonly currentBlock?: number;
   /**
    * Pagination
    **/
   readonly take?: number;
   readonly prevCursor?: T;
 };
+export type TransactionBasicInfo = {
+  readonly transactionHash: string;
+  readonly confirmations: number | null;
+  readonly gasFee: bigint | null;
+  readonly timestamp: number;
+};
 export type GetTransactionsResponse = {
-  readonly items: Array<string>;
+  readonly items: Array<TransactionBasicInfo>;
   /**
    * Pagination
    **/
