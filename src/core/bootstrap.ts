@@ -28,7 +28,9 @@ export class Caller implements IBlockExplorer {
         methodName: T
     ): R {
         const method = this._call(methodName);
-        if (!method || typeof method === "undefined") return (async (...args: any[]) => null) as unknown as R;
+        if (!method || typeof method === "undefined") return (async (...args: any[]) => {
+            throw new Error(`Method "${methodName}" is not available`);
+        }) as unknown as R;
         return method as unknown as R;
     }
 
