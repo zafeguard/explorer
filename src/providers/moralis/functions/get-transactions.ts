@@ -49,10 +49,10 @@ export const getTransactions = createClassMethod<
         timestamp: moment(item.block_timestamp).unix(),
         gasFee: null,
       } satisfies TransactionBasicInfo)),
-      nextCursor: {
+      nextCursor: response.data.cursor && response.data.cursor.length > 0 ? {
         cursor: response.data.cursor,
         limit: response.data.page_size,
-      },
+      } : null,
     };
   }
 
@@ -96,9 +96,9 @@ export const getTransactions = createClassMethod<
         confirmations: currentBlock ? currentBlock - Number(item.block_number) : null,
       } satisfies TransactionBasicInfo
     }),
-    nextCursor: {
+    nextCursor: response.data.cursor && response.data.cursor.length > 0 ? {
       cursor: response.data.cursor,
       limit: response.data.limit,
-    },
+    } : null,
   };
 });
