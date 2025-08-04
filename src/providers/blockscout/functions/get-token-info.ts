@@ -29,10 +29,7 @@ export const getTokenInfo = createClassMethod<
     })
     .catch<{
       readonly data: null;
-    }>((e) => {
-      console.error(e);
-      return { data: null };
-    });
+    }>(() => ({ data: null }));
 
   if (!response.data) throw new Error(`Invalid token "${tokenAddress}"`);
   return {

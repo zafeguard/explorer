@@ -67,14 +67,11 @@ export const getTransactions = createClassMethod<
       ),
     })
     .then(({ data }) => data)
-    .catch<EtherscanResponse<[]>>((e) => {
-      console.error(e);
-      return {
-        status: '0',
-        message: 'NOTOK',
-        result: [],
-      };
-    });
+    .catch<EtherscanResponse<[]>>(() => ({
+      status: '0',
+      message: 'NOTOK',
+      result: [],
+    }));
   const items = response.result.map((item) => {
     const gasFee = BigInt(item.gasUsed ?? item.gas ?? "0") * BigInt(item.gasPrice ?? "0");
     return {

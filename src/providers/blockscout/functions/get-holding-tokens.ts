@@ -35,10 +35,7 @@ export const getHoldingTokens = createClassMethod<
     })
     .catch<{
       readonly data: null;
-    }>((e) => {
-      console.error(e);
-      return { data: null };
-    });
+    }>(() => ({ data: null }));
 
   const items = (response.data?.items ?? []).map((item) =>
     item.token.address_hash.toLowerCase(),

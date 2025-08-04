@@ -37,10 +37,7 @@ export const getTransactions = createClassMethod<
       })
       .catch<{
         readonly data: null;
-      }>((e) => {
-        console.error(e);
-        return { data: null };
-      });
+      }>(() => ({ data: null }));
     if (!response.data) return { items: [], nextCursor: null };
     return {
       items: response.data.result.map((item) => ({
@@ -80,10 +77,7 @@ export const getTransactions = createClassMethod<
         'X-API-Key': instance.apiKey,
       },
     })
-    .catch((e) => {
-      console.error(e);
-      return { data: null };
-    });
+    .catch(() => ({ data: null }));
 
   if (!response.data) return { items: [], nextCursor: null };
   return {

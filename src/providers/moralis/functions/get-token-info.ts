@@ -34,10 +34,7 @@ export const getTokenInfo = createClassMethod<
     })
     .catch<{
       readonly data: [];
-    }>((e) => {
-      console.error(e);
-      return { data: [] };
-    });
+    }>(() => ({ data: [] }));
   if (!response.data || response.data.length <= 0)
     throw new Error('Invalid token address');
 

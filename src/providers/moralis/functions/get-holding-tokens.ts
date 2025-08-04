@@ -28,10 +28,7 @@ export const getHoldingTokens = createClassMethod<
     })
     .catch<{
       readonly data: [];
-    }>((e) => {
-      console.error(e);
-      return { data: [] };
-    });
+    }>(() => ({ data: [] }));
 
   const items = (response.data ?? []).map((item) =>
     item.token_address.toLowerCase(),

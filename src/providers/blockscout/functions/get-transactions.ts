@@ -39,10 +39,7 @@ export const getTransactions = createClassMethod<
       })
       .catch<{
         readonly data: null;
-      }>((e) => {
-        console.error(e);
-        return { data: null };
-      });
+      }>(() => ({ data: null }));
     if (!response.data) return { items: [] satisfies TransactionBasicInfo[], nextCursor: null };
     return {
       items: response.data.items.map((item) => ({
