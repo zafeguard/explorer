@@ -68,10 +68,7 @@ export const getTransactions = createClassMethod<
         items_count: take ?? 20,
       }),
     })
-    .catch((e) => {
-      console.error(e);
-      return { data: null };
-    });
+    .catch(() => ({ data: null }));
 
   if (!response.data) return { items: [] satisfies TransactionBasicInfo[], nextCursor: null };
   return {
